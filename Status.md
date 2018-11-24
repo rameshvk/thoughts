@@ -11,7 +11,10 @@ or the "user" or "session" where the change occured). Since values are
 also used in the context of "merging", this gets awkward as changes
 are required to be free of sideeffects (both input and output). The
 current solution is to pass nil everywhere when values are used within
-the context of merging.
+the context of merging. A good example to work through is one where a
+text maintains the "last modified user" for each segment and whether
+that can be done in a convergent way with merges with the current nil
+scheme. TBD
 
 2. A weak form of injection: some value types (like Refs) may be
 simpler if they had access to an interface (such as a "resolver"),
