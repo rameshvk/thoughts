@@ -22,3 +22,8 @@ available for documentation
 can be debugged with as much facility
 10. Debugging can be remote; snapshots are available etc.
 11. UI framework wired in
+12. Dynamic composition: at some point all languages need some form of
+injection. Most simply skip over this problem leading  to awkward
+contexts and some form of type-less setups.  Instead, dynamic scoping
+is better being an explict part of the language so all the type-safety
+tools can access and validate this.
