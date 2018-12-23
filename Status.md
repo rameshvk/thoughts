@@ -1,6 +1,17 @@
 # Memo to myself
 
-## DOT Context [11/24/2018]
+## Ylang 12/23/2018
+
+Current thinking of functional reactive language captured in
+[ylang0.md](ylang0.md):
+  - Does not capture processes/IPC
+  - Does not include type inference/debugging
+
+I go back and forth between building a prototype and explaining the
+languaage. This week I seem to be more on the side of building a
+prototype to test viability. 
+
+## DOT Context 11/24/2018
 
 After much resistance, I finally caved in and decided to add "Context"
 to DOT. There are two motivating factors:
