@@ -18,9 +18,7 @@ including newlines and such.
 ## Simple value composition: records
 
 A richer value can be created from the basic types using value
-composition using **Records**:
-
-``` Complex{x = 1.2, y = 5} ```
+composition using **Records**: **Complex{x = 1.2, y = 5}**
 
 In the example above, **Complex** is the name while the fields are
 **x** and **y**.
@@ -55,9 +53,13 @@ Sometimes it is useful to define local variables in more complex
 expressions. To do this, one can use an anonymous record and simply
 access a particular field. For example:
 
-``` { result = Complex{x = 1, y = 2, Distance(o) = distance(x-o.x,
-    y-o.y)}, distance(dx, dy) = import("math").sqrt(dx*dx + dy*dy),
-    }.result ```
+``` 
+    { 
+      result = Complex{x = 1, y = 2, Distance(o) = distance(x-o.x, y-o.y)}, 
+      distance(dx, dy) = import("math").sqrt(dx*dx + dy*dy),
+    }.result 
+
+```
 
 ## Immutable values
 
@@ -74,14 +76,23 @@ easily inferred lexically)
 
 ## Collections
 
-Collections (such as arrays or lists) are implemented with the
-**collection(example, count)** function which returns a object with
-methods: **first(), rest(), item(index), withItem(index, item),
-prepend(item), append(item), concat(iteem), find(fn)**
+There are no explicit collection types though it is rather trivial to
+implement generic collection methods:
 
-Collections can be used like lists using **first() and rest()** or via
-random access methods. The compiler and runtime will optimize the
-underlying implementation based on the actual access patterns.
+```
+   ListModule{
+     new = List{empty = true},
+     prepend(list, value) = List{empty = false, item = value, next = list},
+     itemAt(list, index) = if(index == 0, list.item, itemAt(list.next, index - 1)),
+     count(list) = if(list.empty, 0, 1 + count(list.next)),
+   }
+```
+
+The compiler may rewrite collections such as the above into flat
+arrays or even more involved data structures
+
+   TODO: it might be good to figure out common array/list interfaces
+   so it is easier to have code interop properly
 
 ## Equality
 
@@ -121,6 +132,9 @@ call allows creating such an expression inline.
 
 All Y values can be rendered into Text, HTML or Widget. This is done
 by special methods on all objects: **Render(context)**.
+
+   TODO: how does custom render methods work? It can be as simple as
+   doing update(obj, {Render(context) = myRender(obj, context)})
 
 ## Context and imports
 
