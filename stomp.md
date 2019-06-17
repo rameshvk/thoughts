@@ -12,22 +12,22 @@ Stomp is about splitting a DOT application into three hierarchies:
 The storage layer is mostly concerned with the representation for purposes of network transmission and persistence.
 
 * Optimized for convergence and portability
-      * Trees, not full graphs
-      * Use simple portable primitive types.  Use maps/hashes for objects whenever possible.
-* Optimized for ease of schema changes
-      * Avoid deep hierarchies: changing them atomically is difficult
-      * Top level entries are heterogenous object collections (per type of object)
-      * Use maps for collections (and multi-valued entries) instead of arrays.
-           * Changing sort order in the schema is difficult with arrays but easy with sort columns
-           * Converting from  single valued to multi-valued is more natural with map-collections
-      * References to objects are just by (top-level-collection name, id within collection).
-      * Life-cycle issues are simpler but result in garbage collection issues and zombie objects
+    * Trees, not full graphs
+    * Use simple portable primitive types.  Use maps/hashes for objects whenever possible.
+* Optimized for ease of schema changes.
+    * Avoid deep hierarchies: changing them atomically is difficult
+    * Top level entries are heterogenous object collections (per type of object)
+    * Use maps for collections (and multi-valued entries) instead of arrays.
+         * Changing sort order in the schema is difficult with arrays but easy with sort columns
+         * Converting from  single valued to multi-valued is more natural with map-collections
+    * References to objects are just by (top-level-collection name, id within collection).
+    * Life-cycle issues are simpler but result in garbage collection issues and zombie objects
 * Data migration issues still remain, though minimized
-      * most typical but still difficult use case: migrate from single value to collection for a field
-            * would break old code if it didn't accept multi-valued from day-1 (not difficult to support)
-            * old code may try to write single-value and thereby lose stored multi-value.  Probably ok in most cases as users learn.
-      * older/newer clients may not understand newer/older data types
-      * freeze-migration: migration creates a new object and freezes older object. All old clients only need to understand the concept of freezing even if they don't understand new type being migrated to.  (older object can have a field indicate where the new location is).
+    * most typical but still difficult use case: migrate from single value to collection for a field
+        * would break old code if it didn't accept multi-valued from day-1 (not difficult to support)
+        * old code may try to write single-value and thereby lose stored multi-value.  Probably ok in most cases as users learn.
+    * older/newer clients may not understand newer/older data types
+    * freeze-migration: migration creates a new object and freezes older object. All old clients only need to understand the concept of freezing even if they don't understand new type being migrated to.  (older object can have a field indicate where the new location is).
 
 ## Model Hierarchy
 
