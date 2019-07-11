@@ -11,29 +11,29 @@ It makes even more sense if we consider multiple constraints:
    x < 10;
 ```
 
-Now, if `z` changes, `x = z - y; x < 10` results in updating x so long as it honors the `x < 10` constratint at  which point, the update  of `z` can be transferred to `y` (via `y = z - x`).
+Now, if `z` changes, `x = z - y; x < 10` results in updating x so long as it honors the `x < 10` constraint at  which point, the update  of `z` can be transferred to `y` (via `y = z - x`).
 
-But constraints are notoriously difficult to build mental models, so the **form** of expression should probably remain `z = x  + y` with the **intent** being understood as a bi-directional declaration.
+But constraints are notoriously difficult to build mental models around. So the **form** of expression should probably remain `z = x  + y` with the **intent** being understood as a bi-directional declaration.
 
-The general constraint solving problem is hard.  Where the constraint cannot be solved, we end up with a one-way declarative expression as in the current world with the output being (readonly).
+The general constraint solving problem is hard (see [minisat](https://www-cs-faculty.stanford.edu/~knuth/programs/sat13.w) or Knuth's [sat13](https://www-cs-faculty.stanford.edu/~knuth/programs/sat13.w)).  Where the constraint cannot be solved easily, we end up with a one-way declarative expression but this is no worse than today.
 
 ### GROUP BY and UNION
 
-Consider `Union("SourceTable",  TableA, TableB)` to be an operation that simpy combines all rows from tableA and tableB (they can be heterogenous).  This is similar to SQL Union statement with the one distinction that the "SourceTable" is a new column in the output specifying which table (TableA or TableB) the output row originates from.
+Consider `Union("SourceTable",  TableA, TableB)` to be an operation that simply combines all rows from tableA and tableB (they can be heterogenous).  This is similar to the SQL Union statement with the one distinction: the "SourceTable" is a new column in the output specifying which table (TableA or TableB) the output row originates from.
 
-Now notice that `GROUPBY("SourceTable", Output)` can take the output of the `Union` and produce a collection of sub-tables that mirrors `tableA`, `tableB` etc. 
+Now notice that `GROUPBY("SourceTable", Output)` can take the output of the `Union` above and produce a collection of sub-tables that mirrors `tableA`, `tableB` etc. 
 
-These are symmetric operations and so we can treat each as effectively a 2-way declarative statement with edits in one side being meaningnfully translated to edits on the other side and vice-versa.
+These are symmetric operations and so we can treat each as effectively a 2-way declarative statement with edits in one side being meaningnfully translated to edits on the other side.
 
 ### Two-way building blocks combat organic complexity
 
-All data layers typically get more and more complex with time with a lot of dependencies that get tacked on.  Two-way building blocks like these provide a neat escape hatch: If one starts with an individual table, a `UNION()` can create a view that starts out as a `dependent` but since it is 2-way, this can be converted to being the `master` at any point (with all the original tables now becoming the `dependent` versions) without changing anything in the overall data schema.
+All data layers typically get more and more complex with time with organic growth.  Two-way building blocks like these provide a neat escape hatch: If one starts with an individual table, a `UNION()` can create a view that starts out as a `dependent` but since it is 2-way, this can be converted to being the `master` at any point (with all the original tables now becoming the `dependent` versions) without breaking anything.
 
-This type of using of 2-way declarative statements to reshape the schema is effectively an extremely safe way to reshape data.
+Using 2-way declarative statements to reshape the schema is an effectively and safe way to reshape data.
 
 ### A lot of calculations are not two-way declarative.
 
-Calculations like `COUNT(X)` etc happen frequently and are not 2-way.  But a lot of expressions that appear to be one-way are actually *partial* two-way: `FILTER(Table, Column1 = "boo")` only has part of the information.  But we consider the rest  a *residue* (ie `Rest = FILTER(Table, Column1 != "boo")`) that is hidden.  Now the original table can be considered a `dependent` version of the `UNION` of the filtered and the hidden table.   Even in this case, we can easily make schema changes possible.
+Calculations like `COUNT(X)` etc happen frequently and are not 2-way.  But a lot of expressions that appear to be one-way are actually *partial* two-way: `FILTER(Table, Column1 = "boo")` only has part of the information of the original `Table`.  We consider the missing rows a *residue* (ie `Rest = FILTER(Table, Column1 != "boo")`) that is hidden.  Now the original table can be considered a `dependent` version of the `UNION` of the filtered and the hidden table.   Even in this case, we can easily make large schema changes with more security that nothing in the existing system would break.
 
 ###  Multiple hierarchies
 
@@ -51,7 +51,7 @@ Most languages associate a "static type"  with values, but this can be considere
 
 Ideally, the map should support any value as its key type.  Most languages restrict this but with a good hash code function, it seems this is doable.
 
-A side effect of having hash-codes is the ability to implement relatively fast (a < b) and (a == b) **deep value** comparisons using the hash codes.  Obviously, the hash code calculations have to be memoized or precomputed which sacrifices performance for space.
+A side effect of having hash-codes is the ability to implement relatively fast (a < b) and (a == b) **deep value** comparisons using the hash codes (for any types).  (The hash code calculations have to be memoized or precomputed for performance).
 
 ### Hashcode for primitive types
 
