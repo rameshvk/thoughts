@@ -19,7 +19,9 @@ Lots of standard algorithms but simplest is possible 32-bit CRC of binnary data
 
 See: [How to Hash a Set RIchard O'Keefe](https://www.preprints.org/manuscript/201710.0192/v1)
 
-Use Robert Jenkins' [NewHash](http://burtleburtle.net/bob/hash/evahash.html) for strings and array sequences:
+Use Robert Jenkins' [NewHash](http://burtleburtle.net/bob/hash/evahash.html) for strings and array sequences.
+
+Note: [Blake2](https://blake2.net/blake2.pdf) is probably a better function but it is likely to perform poorly, particularly in interpreted languages.
 
 ### Hashcode for maps
 
@@ -46,6 +48,12 @@ for (let elt of seq) {
 }
 return result;
 ```
+
+#### Do not export hash functions to applications
+
+It is tempting to provide `value.hash()` as in C# but this is a mistake. It locks in an implementation to this.
+
+Instead export `blake2.hash(val)` or something like that, so applications can rely on the stability provided by that.
 
 ## Ylang 12/23/2018
 
