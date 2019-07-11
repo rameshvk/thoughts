@@ -1,5 +1,52 @@
 # Memo to myself
 
+## Values 07/11/2019
+
+A pure functional value system can be constructed with simple composition operations:
+
+1. Sequence(val1, ...)
+2. Map(key1 = val1, ....)
+
+Most languages associate a "static type"  with values, but this can be considered the first element of sequence (or a special key "type").
+
+Ideally, the map should support any value as its key type.  Most languages restrict this but with a good hash code function, it seems this is doable.
+
+### Hashcode for primitive types
+
+Lots of standard algorithms but simplest is possible 32-bit CRC of binnary data
+
+### Hashcode for sequences
+
+See: [How to Hash a Set RIchard O'Keefe](https://www.preprints.org/manuscript/201710.0192/v1)
+
+Use Robert Jenkins' [NewHash](http://burtleburtle.net/bob/hash/evahash.html) for strings and array sequences:
+
+### Hashcode for maps
+
+Based on [How to Hash a Set RIchard O'Keefe](https://www.preprints.org/manuscript/201710.0192/v1):
+
+1. Use Xor(4) if performance is super critial
+
+```js
+const hashes = [0, 0, 0, 0];
+for (elt of seq) {
+    const h = hash(elt);
+    hashes[h%4] = hashes[h%4] xor h;
+}
+return h[0] xor h[1] xor h[2] xor h[3];
+```
+
+2. Use Fold (or a symmetric polynomial) if perf is not super critical:
+
+```js
+const result = 0;
+for (let elt of seq) {
+  const h = hash(elt);
+  result = 3860031 + (result+h)*2779 + (result*h*2);
+}
+return result;
+```
+
 ## Ylang 12/23/2018
 
 Current thinking of functional reactive language captured in
