@@ -15,7 +15,7 @@ Now, if `z` changes, `x = z - y; x < 10` results in updating x so long as it hon
 
 But constraints are notoriously difficult to build mental models around. So the **form** of expression should probably remain `z = x  + y` with the **intent** being understood as a bi-directional declaration.
 
-The general constraint solving problem is hard (see [minisat](https://www-cs-faculty.stanford.edu/~knuth/programs/sat13.w) or Knuth's [sat13](https://www-cs-faculty.stanford.edu/~knuth/programs/sat13.w)).  Where the constraint cannot be solved easily, we end up with a one-way declarative expression but this is no worse than today.
+The general constraint solving problem is hard (see [minisat](https://github.com/niklasso/minisat) or Knuth's [sat13](https://www-cs-faculty.stanford.edu/~knuth/programs/sat13.w)).  Where the constraint cannot be solved easily, we end up with a one-way declarative expression but this is no worse than today.
 
 ### GROUP BY and UNION
 
@@ -34,6 +34,10 @@ Using 2-way declarative statements to reshape the schema is an effectively and s
 ### A lot of calculations are not two-way declarative.
 
 Calculations like `COUNT(X)` etc happen frequently and are not 2-way.  But a lot of expressions that appear to be one-way are actually *partial* two-way: `FILTER(Table, Column1 = "boo")` only has part of the information of the original `Table`.  We consider the missing rows a *residue* (ie `Rest = FILTER(Table, Column1 != "boo")`) that is hidden.  Now the original table can be considered a `dependent` version of the `UNION` of the filtered and the hidden table.   Even in this case, we can easily make large schema changes with more security that nothing in the existing system would break.
+
+If one is not using a `SAT solver` (such as [minisat](https://github.com/niklasso/minisat)), even simple expressions like `y = x + x` cannnot be easily converted to 2-way form.  If these expressions have a `compile` stage, this can be addressed by the compiler normalizing these expressions (maybe into `2*x` for  instance).  But if the expressions are created dynamically in code (like say: `let result = sum(x, times(x, 2))`, the result may end up being readonly because solvers cannot get involved in such imperative SDKs).
+
+A hybrid approach with streams based programming is to imperatively create the streams but then turn around and have an "optimize" stage which takes the final output and does the `constraint solving`.  This has the potential to get the best of both worlds (an imperative setup + optimization to yield 2-way declarations when possible).
 
 ###  Multiple hierarchies
 
