@@ -31,47 +31,60 @@ tables.
 ## Folding and hiding
 
 With the use of OT, one can consider a branch created with a fixed set
-of "folded" changes. All changes to the master can be translated to
+of **folded** changes. All changes to the master can be translated to
 the branch and all changes to the branch can be translated to the
-master (with some caveats[1](#caveat-1)).
+master (with some [caveats](#caveat-1)).
 
 Folding can be thought of as unpublished local changes. The concept of
 unaccepted reemote changes is **hiding** and this is complementary.
 In fact, **hiding** remote changes can be thought of as accepting them
 followed by adding the undo of that remote change to the list of
-**folded** changes (with some caveats[2](#caveat-2)).
+**folded** changes (with some [caveats](#caveat-2)).
 
 If the **foldings** and **hidings** are scoped (with some
-caveats[3])(#caveat-3)) to parts of the full app state, and the actual
-changes are considered part of the definition of a materialized view
-of sorts, we end up in a situation of **embedded** branches with a
+[caveats])(#caveat-3)) to parts of the full app state, this can be
+considered part of the definition of a materialized view of sorts. We
+end up in a situation of **embedded** branches with a 
 choice of **manual** vs **automatic** synchronization.
 
 This forms a **divergent** strain of data but one which is intended to
 be persistent for expressive power.
 
-## Filters on changes
+    That this way of looking at derivations as changes is
+    complementary to thinking of derivations as declarative
+    views.
+
+## Dynamic branch definition
 
 These **divergent** embedded branches can be defined explicitly as a
-set of folded and hidden changes but there is also the ability to
-define a function on the whole history of changes.
+set of folded and hidden changes.  But one can also consider a branch
+as a computation on the data (i.e. the changes are dynamically
+created based on the data) or even as a computation on the history of
+the master branch.
 
-For example, one can define a mapping which converts currenccy from
+For example, one can define a mapping which converts currency from
 dollars to corresponding euros (based on the conversion rate at a
-particular time) and arrive at the whole app as it would be in Euros.
+particular time or based on a local table of currency conversions) and
+arrive at the whole app as it would be in Euros.
 
-More interesting changes are filtering out changes by declarative
-constraints (such as `tag = edited_by_user_X`).
+Another interesting case is filtering out changes based on who
+authored the change.
 
 While these **derivations** may be compute intensive if implemented in
 a generic way, specific derivations may be effectively implemented.
+
+    This will likely suffer the same perf cost as ASOF if exposed
+    to users as a general feature.  But it gives us a framework to
+    talk about these and possibly hook specific implementations
+    without devolving to having to support all of ASOF
 
 ## Divergence is easier than convergence
 
 The set of changes that are compatible with OT is rather narrow. A
 much broader set of changes can be used safely with
-divergence([4](#caveat-4)) -- the only requirement is to  be able to
-translate changes from one side of the branch to the other.
+divergence([caveat](#caveat-4)) -- the only requirement is to  be able to
+translate changes from one side of the branch to the other.  The
+dynamic branch definitions are an example of this.
 
 Consider the derivation which groups a set of individual tables into
 one mega-table.  There are ways to do this such that changes on
@@ -89,7 +102,7 @@ Another way of thinking of this is to view a master and divergent
 branches as being in a symmetric relationship (defined by the folded
 and local changes). While the concrete representation may use either
 as the master, the logical shift to using the other as the master is
-feasible ([5](#caveat-4))
+feasible ([caveat](#caveat-5))
 
 ## Code itself as data
 
